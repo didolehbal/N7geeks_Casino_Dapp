@@ -1,4 +1,4 @@
-const Lottery = artifacts.require("Lottery");
+const Casino = artifacts.require("Casino");
 module.exports = function(_deployer) {
-  _deployer.deploy(Lottery);
+  _deployer.deploy(Casino);
 };
