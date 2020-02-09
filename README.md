@@ -1,4 +1,1 @@
-- Blockchain
-- Cryptocurrencies
-- Mining
-- Smart Contracts
+N7geeks workshop 12/02/2020 - Casino Dapp
