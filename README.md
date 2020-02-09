@@ -1,2 +1,5 @@
 N7geeks workshop 12/02/2020 - Casino Dapp
-![](demo.gif)
+
+Markup :  # Demonstration : #
+
+![Dapp.gif](demo.gif "Dapp gif")
