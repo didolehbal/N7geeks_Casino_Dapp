@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Wheel from "./Wheel";
+import Account from "./Account";
 import { Input, Button, Form, Spin, Alert } from "antd";
 
 const FINNEY = 1e15;
@@ -29,7 +30,7 @@ function Casino({ drizzleContext }) {
   }, [initialized]);
 
   const _play = () => {
-    setRound({})
+    setRound({});
     if (amount && bet) {
       Casino.methods
         .play(bet)
@@ -39,39 +40,53 @@ function Casino({ drizzleContext }) {
         })
         .on("receipt", receipt => {
           setAccount({ ...account, balance: account.balance - amount });
-          let amountWon = receipt.events.hasWon &&
-            Number.parseInt(receipt.events.hasWon.returnValues.amount ) || 0;
-          setRound({jackpot:1})
-          setTimeout(()=>{
+          let amountWon =
+            (receipt.events.hasWon &&
+              Number.parseInt(receipt.events.hasWon.returnValues.amount)) ||
+            0;
+          setRound({ jackpot: 1 });
+          setTimeout(() => {
             setRound({
               win: receipt.events.hasWon ? true : false,
               amount: amountWon,
               jackpot: receipt.events.unfortunate
-                ? Number.parseInt(receipt.events.unfortunate.returnValues.jackpot)
+                ? Number.parseInt(
+                    receipt.events.unfortunate.returnValues.jackpot
+                  )
                 : bet
             });
             setAccount(account => ({
               ...account,
               balance: account.balance + amountWon
             }));
-          },2000)
+          }, 2000);
         })
         .on("error", err => {
           console.error(err);
         });
     }
   };
-  console.log(round)
   if (initialized === false || account === null) {
-    return <Spin />;
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection:"column",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "100vh",
+          backgroundColor:"#eee"
+        }}
+      >
+        <Spin size="large" />
+        <p>Connecting to the network...</p>
+      </div>
+    );
   }
   return (
     <div className="App">
-      <div className="section">
-        <h2>Active Account</h2>
-        <p>adress:{account.address} </p>
-        <p>balance:{(account.balance / ETH).toFixed(3) + " ETH"} </p>
-      </div>
+      <Account account={account} ETH={ETH}/>
       <Wheel setBet={setBet} item={round.jackpot} />
 
       <Form style={{ width: "30%", margin: "auto" }}>
@@ -82,10 +97,7 @@ function Casino({ drizzleContext }) {
               type="success"
             />
           ) : (
-            <Alert
-              message={"you Lost!" }
-              type="error"
-            />
+            <Alert message={"you Lost!"} type="error" />
           )
         ) : null}
 

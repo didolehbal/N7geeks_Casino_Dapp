@@ -8,10 +8,16 @@ contract Casino {
     uint64 constant MINIMUM_AMOUNT_TO_PLAY = 250 finney;
     address payable owner;
     uint8 constant WHEEL_LENGTH = 12;
+    mapping(uint8 => bool) private POSSIBLE_BETS;
     uint8[] Wheel = [1,3,1,10,1,3,1,5,1,5,3,1,10,1,3,1,5,1,3,1,20,1,3,1,5];
 
     constructor() public {
         owner = msg.sender;
+        POSSIBLE_BETS[1] = true;
+        POSSIBLE_BETS[3] = true;
+        POSSIBLE_BETS[5] = true;
+        POSSIBLE_BETS[10] = true;
+        POSSIBLE_BETS[20] = true;
     }
 
     function random() private view returns (uint8) {
@@ -30,7 +36,11 @@ contract Casino {
             msg.value > MINIMUM_AMOUNT_TO_PLAY,
             "MINIMUM amount is 250 finney | 0.25 ETHER"
         );
-        require(bet >= 0 && bet < WHEEL_LENGTH, "bet out of Range");
+        require(
+            address(this).balance > bet * msg.value,
+            "out of cash !"
+        );
+        require(POSSIBLE_BETS[bet], "bet out of Range");
         
         uint8 winningIndex = random() % WHEEL_LENGTH;
         jackpot = Wheel[winningIndex];
